@@ -61,4 +61,9 @@ mod test {
     fn failing_test() {
         assert!(false);
     }
+
+    #[test]
+    fn another_failure() {
+        assert!(false);
+    }
 }
