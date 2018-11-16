@@ -2,7 +2,7 @@
 name = "one_time_pad"
 version = "0.1.0"
 authors = ["Logan Saso <sasol@oregonstate.edu>"]
-edition = "2018"
+# edition = "2018"
 
 [dependencies]
 rand = "0.6.0"
