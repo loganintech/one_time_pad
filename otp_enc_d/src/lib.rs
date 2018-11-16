@@ -56,4 +56,9 @@ mod test {
         let encoded = pad_string("ABCDEFGHIJKLMNOPQRSTUVWXYZ ", "BBBBBBBBBBBBBBBBBBBBBBBBBBB");
         assert!(encoded == "BCDEFGHIJKLMNOPQRSTUVWXYZ A");
     }
+
+    #[test]
+    fn failing_test() {
+        assert!(false);
+    }
 }
