@@ -4,3 +4,8 @@ version = "0.1.0"
 authors = ["Logan Saso <sasol@oregonstate.edu>"]
 
 [dependencies]
+
+
+[lib]
+name = "otp_d_lib"
+path = "src/lib.rs"

@@ -1,6 +1,5 @@
-extern crate rand;
+extern crate otp_d_lib;
 
-use rand::prelude::*;
 use std::env::args;
 use std::net::Ipv4Addr;
 
@@ -18,5 +17,4 @@ fn main() {
     }
 
     let url = String::from("127.0.0.1");
-
 }
