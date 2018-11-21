@@ -12,7 +12,10 @@ pub fn pad_string(plaintext: &str, pad: &str) -> String {
                 character if character < 65 => 26,
                 character => character - 65,
             };
-            let pad_u32 = pad as u32 - 65;
+            let pad_u32 = match pad {
+                ' ' => 26,
+                pad => pad as u32 - 65,
+            };
 
             match (((chr_u32 + pad_u32) % 27) + 65) as u8 {
                 //Character index 26 is a space. Add 65 to get to the beginning of the character arrays
@@ -55,5 +58,11 @@ mod test {
     fn pad_five() {
         let encoded = pad_string("ABCDEFGHIJKLMNOPQRSTUVWXYZ ", "BBBBBBBBBBBBBBBBBBBBBBBBBBB");
         assert!(encoded == "BCDEFGHIJKLMNOPQRSTUVWXYZ A");
+    }
+
+    #[test]
+    fn pad_six() {
+        let encoded = pad_string("AAA", "AB ");
+        assert!(encoded == "AB ");
     }
 }

@@ -10,7 +10,8 @@ rand = "0.6.0"
 [workspace]
 members = [
     "otp_enc_d",
-    "keygen"
+    "otp_enc",
+    "keygen",
 ]
 
 [lib]
@@ -20,6 +21,10 @@ path = "otp_enc_d/src/lib.rs"
 [[bin]]
 name = "otp_enc_d"
 path = "otp_enc_d/src/main.rs"
+
+[[bin]]
+name = "otp_enc"
+path = "otp_enc/src/main.rs"
 
 [[bin]]
 name = "keygen"
