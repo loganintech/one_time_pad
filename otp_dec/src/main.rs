@@ -11,15 +11,15 @@ fn main() -> Result<(), Box<std::error::Error>> {
 
     let ciphertext = arguments
         .next()
-        .expect("Usage: otp_enc <ciphertext> <one_time_pad> <port>");
+        .expect("Usage: otp_dec <ciphertext> <one_time_pad> <port>");
 
     let one_time_pad = arguments
         .next()
-        .expect("Usage: otp_enc <ciphertext> <one_time_pad> <port>");
+        .expect("Usage: otp_dec <ciphertext> <one_time_pad> <port>");
 
     let port = arguments
         .next()
-        .expect("Usage: otp_enc <ciphertext> <one_time_pad> <port>")
+        .expect("Usage: otp_dec <ciphertext> <one_time_pad> <port>")
         .parse::<u32>()
         .expect("Couldn't parse port into valid u32.");
 

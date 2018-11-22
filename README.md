@@ -1,3 +1,11 @@
+# Compiling
+
+### The Bins
+
+`cargo build --release --bins -Z unstable-options --out-dir <out_dir>`
+
+---
+
 # Program 4 – CS 344
 
 ## Overview
