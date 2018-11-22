@@ -1,5 +1,5 @@
 [package]
-name = "otp_enc"
+name = "otp_dec"
 version = "0.1.0"
 authors = ["Logan Saso <sasol@oregonstate.edu>"]
 

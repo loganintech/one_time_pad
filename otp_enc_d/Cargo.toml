@@ -3,6 +3,5 @@ name = "otp_enc_d"
 version = "0.1.0"
 authors = ["Logan Saso <sasol@oregonstate.edu>"]
 
-[lib]
-name = "otp_d_lib"
-path = "src/lib.rs"
+[dependencies]
+otp_lib = { path = "../otp_lib" }

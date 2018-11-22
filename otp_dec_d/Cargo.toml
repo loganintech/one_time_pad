@@ -1,7 +1,7 @@
 [package]
-name = "otp_enc"
+name = "otp_dec_d"
 version = "0.1.0"
 authors = ["Logan Saso <sasol@oregonstate.edu>"]
 
 [dependencies]
-rand = "0.6.0"
+otp_lib = { path = "../otp_lib" }

@@ -1,6 +1,6 @@
 extern crate otp_lib;
 
-use otp_lib::encode;
+use otp_lib::decode;
 use std::env::args;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
@@ -20,7 +20,7 @@ fn handle_stream(mut stream: TcpStream) {
                 let _ = stream.write_all("Incorrectly formatted string.".as_bytes());
                 return;
             }
-            let cipher = encode(parts[0], parts[1]);
+            let cipher = decode(parts[0], parts[1]);
             let mut stream = match TcpStream::connect(format!("localhost:{}", parts[2])) {
                 Ok(stream) => stream,
                 Err(e) => {

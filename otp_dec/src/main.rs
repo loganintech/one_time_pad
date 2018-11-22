@@ -9,17 +9,17 @@ use std::net::{TcpListener, TcpStream};
 fn main() -> Result<(), Box<std::error::Error>> {
     let mut arguments = args().skip(1);
 
-    let plaintext = arguments
+    let ciphertext = arguments
         .next()
-        .expect("Usage: otp_enc <plaintext> <one_time_pad> <port>");
+        .expect("Usage: otp_enc <ciphertext> <one_time_pad> <port>");
 
     let one_time_pad = arguments
         .next()
-        .expect("Usage: otp_enc <plaintext> <one_time_pad> <port>");
+        .expect("Usage: otp_enc <ciphertext> <one_time_pad> <port>");
 
     let port = arguments
         .next()
-        .expect("Usage: otp_enc <plaintext> <one_time_pad> <port>")
+        .expect("Usage: otp_enc <ciphertext> <one_time_pad> <port>")
         .parse::<u32>()
         .expect("Couldn't parse port into valid u32.");
 
@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
             }
         };
 
-        stream.write_all(format!("{}|{}|{}", plaintext, one_time_pad, response_port).as_bytes())?;
+        stream.write_all(format!("{}|{}|{}", ciphertext, one_time_pad, response_port).as_bytes())?;
         drop(stream);
         response_stream = response_listener.accept()?.0;
         break;

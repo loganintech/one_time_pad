@@ -45,6 +45,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "otp_dec"
+version = "0.1.0"
+dependencies = [
+ "rand 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "otp_dec_d"
+version = "0.1.0"
+dependencies = [
+ "otp_lib 0.1.0",
+]
+
+[[package]]
 name = "otp_enc"
 version = "0.1.0"
 dependencies = [
@@ -53,6 +67,13 @@ dependencies = [
 
 [[package]]
 name = "otp_enc_d"
+version = "0.1.0"
+dependencies = [
+ "otp_lib 0.1.0",
+]
+
+[[package]]
+name = "otp_lib"
 version = "0.1.0"
 
 [[package]]
