@@ -1,10 +1,15 @@
-pub fn encode(plaintext: &str, key: &str) -> String {
-    assert!(plaintext.len() <= key.len());
-    assert!(key
+pub fn encode(plaintext: &str, key: &str) -> Result<String, String> {
+    if plaintext.len() > key.len() {
+        return Err("The key must be equal or longer than the plaintext.".into());
+    }
+    if !key
         .chars()
-        .all(|chr| chr.is_alphabetic() || chr.is_whitespace()));
+        .all(|chr| chr.is_alphabetic() || chr.is_whitespace())
+    {
+        return Err("The key source was malformed.".into());
+    }
 
-    plaintext
+    Ok(plaintext
         .chars()
         .zip(key.chars())
         .map(|(chr, key_chr)| {
@@ -20,19 +25,24 @@ pub fn encode(plaintext: &str, key: &str) -> String {
             match (((chr_u32 + key_chr_u32) % 27) + 65) as u8 {
                 //Character index 26 is a space. Add 65 to get to the beginning of the character arrays
                 val if val == 26 + 65 => ' ',
-                val => val as char
+                val => val as char,
             }
         })
-        .collect::<String>()
+        .collect::<String>())
 }
 
-pub fn decode(ciphertext: &str, key: &str) -> String {
-    assert!(ciphertext.len() <= key.len());
-    assert!(key
+pub fn decode(ciphertext: &str, key: &str) -> Result<String, String> {
+    if ciphertext.len() > key.len() {
+        return Err("The key must be equal or longer than the ciphertext.".into());
+    }
+    if !key
         .chars()
-        .all(|chr| chr.is_alphabetic() || chr.is_whitespace()));
+        .all(|chr| chr.is_alphabetic() || chr.is_whitespace())
+    {
+        return Err("The key source was malformed.".into());
+    }
 
-    ciphertext
+    Ok(ciphertext
         .chars()
         .zip(key.chars())
         .map(|(chr, key_chr)| {
@@ -55,10 +65,10 @@ pub fn decode(ciphertext: &str, key: &str) -> String {
             match ((res % 27) + 65) as u8 {
                 //Character index 26 is a space. Add 65 to get to the beginning of the character arrays
                 val if val == 26 + 65 => ' ',
-                val => val as char
+                val => val as char,
             }
         })
-        .collect::<String>()
+        .collect::<String>())
 }
 
 mod test {
@@ -70,43 +80,46 @@ mod test {
     #[test]
     fn encode_one() {
         let encoded = encode("TEXT", "AAAAA");
-        assert!(encoded == "TEXT");
+        assert!(encoded.unwrap() == "TEXT");
     }
 
     #[test]
     fn encode_two() {
         let encoded = encode("TEXT", "BBBBB");
-        assert!(encoded == "UFYU");
+        assert!(encoded.unwrap() == "UFYU");
     }
 
     #[test]
     fn encode_three() {
         let encoded = encode("TEXT", "CCCCC");
-        assert!(encoded == "VGZV");
+        assert!(encoded.unwrap() == "VGZV");
     }
 
     #[test]
     fn encode_four() {
         let encoded = encode("ABCDEFGHIJKLMNOPQRSTUVWXYZ ", "AAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        assert!(encoded == "ABCDEFGHIJKLMNOPQRSTUVWXYZ ");
+        assert!(encoded.unwrap() == "ABCDEFGHIJKLMNOPQRSTUVWXYZ ");
     }
 
     #[test]
     fn encode_five() {
         let encoded = encode("ABCDEFGHIJKLMNOPQRSTUVWXYZ ", "BBBBBBBBBBBBBBBBBBBBBBBBBBB");
-        assert!(encoded == "BCDEFGHIJKLMNOPQRSTUVWXYZ A");
+        assert!(encoded.unwrap() == "BCDEFGHIJKLMNOPQRSTUVWXYZ A");
     }
 
     #[test]
     fn encode_six() {
         let encoded = encode("AAA", "AB ");
-        assert!(encoded == "AB ");
+        assert!(encoded.unwrap() == "AB ");
     }
 
     #[test]
     fn encode_real() {
-        let encoded = encode("A REAL EXAMPLE WITH SOME ACTUAL TEXT", "FUKBEAGXTNPT AGSDP JBDRQIPSONGBMAPJQDCNQBBDXQYQSAMOTAKZQCROOSGCIPIFWUNNXGXCAYSRK");
-        assert!(encoded ==   "FTAFELFAPNAHKEFNLHGITRCUHPUGGGMLTTFI");
+        let encoded = encode(
+            "A REAL EXAMPLE WITH SOME ACTUAL TEXT",
+            "FUKBEAGXTNPT AGSDP JBDRQIPSONGBMAPJQDCNQBBDXQYQSAMOTAKZQCROOSGCIPIFWUNNXGXCAYSRK",
+        );
+        assert!(encoded.unwrap() == "FTAFELFAPNAHKEFNLHGITRCUHPUGGGMLTTFI");
     }
 
     // DECODE
@@ -114,43 +127,46 @@ mod test {
     #[test]
     fn decode_one() {
         let decoded = decode("TEXT", "AAAA");
-        assert!(decoded == "TEXT");
+        assert!(decoded.unwrap() == "TEXT");
     }
 
     #[test]
     fn decode_two() {
         let decoded = decode("UFYU", "BBBBB");
-        assert!(decoded == "TEXT");
+        assert!(decoded.unwrap() == "TEXT");
     }
 
     #[test]
     fn decode_three() {
         let decoded = decode("VGZV", "CCCCC");
-        assert!(decoded == "TEXT");
+        assert!(decoded.unwrap() == "TEXT");
     }
 
     #[test]
     fn decode_four() {
         let decoded = decode("ABCDEFGHIJKLMNOPQRSTUVWXYZ ", "AAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        assert!(decoded == "ABCDEFGHIJKLMNOPQRSTUVWXYZ ");
+        assert!(decoded.unwrap() == "ABCDEFGHIJKLMNOPQRSTUVWXYZ ");
     }
 
     #[test]
     fn decode_five() {
         let decoded = decode("BCDEFGHIJKLMNOPQRSTUVWXYZ A", "BBBBBBBBBBBBBBBBBBBBBBBBBBB");
-        assert!(decoded == "ABCDEFGHIJKLMNOPQRSTUVWXYZ ");
+        assert!(decoded.unwrap() == "ABCDEFGHIJKLMNOPQRSTUVWXYZ ");
     }
 
     #[test]
     fn decode_six() {
         let decoded = decode("AB ", "AB ");
-        assert!(decoded == "AAA");
+        assert!(decoded.unwrap() == "AAA");
     }
 
     #[test]
     fn decode_real() {
-        let decoded = decode("FTAFELFAPNAHKEFNLHGITRCUHPUGGGMLTTFI", "FUKBEAGXTNPT AGSDP JBDRQIPSONGBMAPJQDCNQBBDXQYQSAMOTAKZQCROOSGCIPIFWUNNXGXCAYSRK");
-        assert!(decoded == "A REAL EXAMPLE WITH SOME ACTUAL TEXT");
+        let decoded = decode(
+            "FTAFELFAPNAHKEFNLHGITRCUHPUGGGMLTTFI",
+            "FUKBEAGXTNPT AGSDP JBDRQIPSONGBMAPJQDCNQBBDXQYQSAMOTAKZQCROOSGCIPIFWUNNXGXCAYSRK",
+        );
+        assert!(decoded.unwrap() == "A REAL EXAMPLE WITH SOME ACTUAL TEXT");
     }
 
 }

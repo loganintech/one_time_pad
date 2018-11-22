@@ -28,7 +28,7 @@ fn handle_stream(mut stream: TcpStream) {
                     return;
                 }
             };
-            let _ = stream.write_all(cipher.as_bytes());
+            let _ = stream.write_all(cipher.unwrap_or_else(|e| e).as_bytes());
         },
         Err(e) => {
             eprintln!("Couldn't parse buffer as string: {}", e);
