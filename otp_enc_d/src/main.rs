@@ -29,7 +29,7 @@ fn handle_stream(mut stream: TcpStream) {
                 }
             };
             if parts[0] == "dec" {
-                let _ = stream.write_all("Cannot encode with otp_enc_d.".as_bytes());
+                let _ = stream.write_all("Cannot decode with otp_enc_d.".as_bytes());
                 return;
             }
             let _ = stream.write_all(cipher.unwrap_or_else(|e| e).as_bytes());
