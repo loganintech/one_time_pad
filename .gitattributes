@@ -1,0 +1,2 @@
+compileall.sh linguist-documentation
+p4gradingscript.sh linguist-documentation
