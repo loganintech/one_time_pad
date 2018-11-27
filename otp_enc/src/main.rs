@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
             }
         };
 
-        stream.write_all(format!("{}|{}|{}", plaintext, one_time_pad, response_port).as_bytes())?;
+        stream.write_all(format!("enc|{}|{}|{}", plaintext, one_time_pad, response_port).as_bytes())?;
         drop(stream);
         response_stream = response_listener.accept()?.0;
         break;

@@ -49,7 +49,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
         };
 
         stream
-            .write_all(format!("{}|{}|{}", ciphertext, one_time_pad, response_port).as_bytes())?;
+            .write_all(format!("dec|{}|{}|{}", ciphertext, one_time_pad, response_port).as_bytes())?;
         drop(stream);
         response_stream = response_listener.accept()?.0;
         break;

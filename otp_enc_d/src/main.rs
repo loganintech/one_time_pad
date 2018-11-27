@@ -16,18 +16,22 @@ fn handle_stream(mut stream: TcpStream) {
     match String::from_utf8(buffer) {
         Ok(buff) => {
             let parts: Vec<&str> = buff.split('|').collect();
-            if parts.len() != 3 {
+            if parts.len() != 4 {
                 let _ = stream.write_all("Incorrectly formatted string.".as_bytes());
                 return;
             }
-            let cipher = encode(parts[0], parts[1]);
-            let mut stream = match TcpStream::connect(format!("localhost:{}", parts[2])) {
+            let cipher = encode(parts[1], parts[2]);
+            let mut stream = match TcpStream::connect(format!("localhost:{}", parts[3])) {
                 Ok(stream) => stream,
                 Err(e) => {
                     eprintln!("Couldn't connect for response: {}", e);
                     return;
                 }
             };
+            if parts[0] == "dec" {
+                let _ = stream.write_all("Cannot encode with otp_enc_d.".as_bytes());
+                return;
+            }
             let _ = stream.write_all(cipher.unwrap_or_else(|e| e).as_bytes());
         },
         Err(e) => {
