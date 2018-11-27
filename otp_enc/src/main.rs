@@ -3,23 +3,30 @@ extern crate rand;
 use rand::prelude::*;
 
 use std::env::args;
+use std::fs::File;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
 fn main() -> Result<(), Box<std::error::Error>> {
     let mut arguments = args().skip(1);
 
-    let plaintext = arguments
+    let mut plaintext = String::new();
+    let plaintext_file = arguments
         .next()
-        .expect("Usage: otp_enc <plaintext> <one_time_pad> <port>");
+        .expect("Usage: otp_enc <plaintext_file> <key_file> <port>");
+    File::open(plaintext_file)?.read_to_string(&mut plaintext)?;
+    let plaintext = plaintext.trim_right();
 
-    let one_time_pad = arguments
+    let mut one_time_pad = String::new();
+    let filename = arguments
         .next()
-        .expect("Usage: otp_enc <plaintext> <one_time_pad> <port>");
+        .expect("Usage: otp_enc <plaintext_file> <key_file> <port>");
+    File::open(filename)?.read_to_string(&mut one_time_pad)?;
+    let one_time_pad = one_time_pad.trim_right();
 
     let port = arguments
         .next()
-        .expect("Usage: otp_enc <plaintext> <one_time_pad> <port>")
+        .expect("Usage: otp_enc <plaintext_file> <key_file> <port>")
         .parse::<u32>()
         .expect("Couldn't parse port into valid u32.");
 
@@ -47,9 +54,8 @@ fn main() -> Result<(), Box<std::error::Error>> {
         break;
     }
 
-
     let mut response = vec![];
     let _ = response_stream.read_to_end(&mut response);
-    println!("Response: {}", String::from_utf8(response).unwrap());
+    println!("{}", String::from_utf8(response).unwrap());
     Ok(())
 }

@@ -14,7 +14,7 @@ pub fn encode(plaintext: &str, key: &str) -> Result<String, String> {
         .zip(key.chars())
         .map(|(chr, key_chr)| {
             let chr_u32 = match chr {
-                character if character == ' ' => 26,
+                ' ' => 26,
                 character => character as u32 - 65,
             };
             let key_chr_u32 = match key_chr {
