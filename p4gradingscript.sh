@@ -38,8 +38,8 @@ ${echo} '#START OF GRADING SCRIPT'
 ${echo} '#keygen 20 > key20'
 keygen 20 > key20
 ${echo} "#5 POINTS: key20 must exist"
-[ -s key20 ] || rm -f key20 
-if [ -f key20 ]; then ${echo} 'key20 exists!'; else ${echo} 'key20 DOES NOT EXIST'; fi 
+[ -s key20 ] || rm -f key20
+if [ -f key20 ]; then ${echo} 'key20 exists!'; else ${echo} 'key20 DOES NOT EXIST'; fi
 ${echo}
 ${echo} "#-----------------------------------------"
 ${echo} "#5 POINTS: Number of characters in key20, should be 21:"
@@ -49,7 +49,7 @@ ${echo} "#-----------------------------------------"
 ${echo} '#keygen 70000 > key70000'
 keygen 70000 > key70000
 ${echo} "#5 POINTS: Number of characters in key70000, should be 70001:"
-[ -s key70000 ] || rm -f key70000 
+[ -s key70000 ] || rm -f key70000
 wc -m key70000
 ${echo}
 ${echo} "#-----------------------------------------"
@@ -66,8 +66,8 @@ ${echo} '#-----------------------------------------'
 ${echo} '#otp_enc plaintext1 key70000 $encport > ciphertext1'
 otp_enc plaintext1 key70000 $encport > ciphertext1
 ${echo} "#10 POINTS: ciphertext1 must exist"
-[ -s ciphertext1 ] || rm -f ciphertext1 
-if [ -f ciphertext1 ]; then ${echo} 'ciphertext1 exists!'; else ${echo} 'ciphertext1 DOES NOT EXIST'; fi 
+[ -s ciphertext1 ] || rm -f ciphertext1
+if [ -f ciphertext1 ]; then ${echo} 'ciphertext1 exists!'; else ${echo} 'ciphertext1 DOES NOT EXIST'; fi
 ${echo}
 ${echo} '#-----------------------------------------'
 ${echo} '#10 POINTS: ciphertext1 must be same number of chars as source'
@@ -119,6 +119,11 @@ otp_enc plaintext5 key70000 $encport > ciphertext5 &
 ${echo} 'Ten second sleep, your program must complete in this time'
 sleep 10
 ls -pla
+
+# Print contents of the `5` files. ciphertext 5 should be empty
+cat plaintext5
+cat ciphertext5
+
 ${echo}
 ${echo} '#-----------------------------------------'
 ${echo} '#15 POINTS: concurrent test of decryption - look for 4 plaintext#_a files that match the plaintext# files'

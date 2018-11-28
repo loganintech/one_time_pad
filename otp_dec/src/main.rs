@@ -6,35 +6,61 @@ use std::env::args;
 use std::fs::File;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
+use std::process::exit;
 
-fn main() -> Result<(), Box<std::error::Error>> {
+fn main() {
     let mut arguments = args().skip(1);
 
-    let mut ciphertext = String::new();
-    let cipher_text_file = arguments
-        .next()
-        .expect("Usage: otp_dec <ciphertext> <key_file> <port>");
-    File::open(cipher_text_file)?.read_to_string(&mut ciphertext)?;
-    let ciphertext = ciphertext.trim_right();
+    let mut plaintext = String::new();
+    let ciphertext_file = arguments.next().unwrap_or_else(|| {
+        eprintln!("Usage: otp_dec <ciphertext_file> <key_file> <port>");
+        exit(1);
+    });
+    File::open(ciphertext_file)
+        .unwrap_or_else(|_| {
+            eprintln!("Couldn't read plaintext file.");
+            exit(2);
+        })
+        .read_to_string(&mut plaintext)
+        .unwrap_or_else(|_| {
+            eprintln!("Plaintext file was not well-formatted UTF-8.");
+            exit(3);
+        });
+    let plaintext = plaintext.trim_right();
 
-    let mut one_time_pad = String::new();
-    let filename = arguments
-        .next()
-        .expect("Usage: otp_dec <plaintext> <key_file> <port>");
-    File::open(filename)?.read_to_string(&mut one_time_pad)?;
-    let one_time_pad = one_time_pad.trim_right();
+    let mut key = String::new();
+    let filename = arguments.next().unwrap_or_else(|| {
+        eprintln!("Usage: otp_dec <ciphertext_file> <key_file> <port>");
+        exit(4);
+    });
+    File::open(filename)
+        .unwrap_or_else(|_| {
+            eprintln!("Couldn't read plaintext file.");
+            exit(5);
+        })
+        .read_to_string(&mut key)
+        .unwrap_or_else(|_| {
+            eprintln!("Plaintext file was not well-formatted UTF-8.");
+            exit(6);
+        });
+    let key = key.trim_right();
 
     let port = arguments
         .next()
-        .expect("Usage: otp_dec <ciphertext> <key_file> <port>")
+        .unwrap_or_else(|| {
+            eprintln!("Usage: otp_dec <ciphertext_file> <key_file> <port>");
+            exit(6);
+        })
         .parse::<u32>()
         .expect("Couldn't parse port into valid u32.");
 
-    let mut stream = TcpStream::connect(&format!("localhost:{}", port))?;
+    let mut stream = TcpStream::connect(&format!("localhost:{}", port)).unwrap_or_else(|_| {
+        eprintln!("Couldn't connect to the daemon. Are you sure it's running?");
+        exit(7);
+    });
 
     let mut rng = thread_rng();
     let mut response_port: u32 = (rng.next_u32() % 40_000) + 20_000;
-
     let mut response_stream: TcpStream;
 
     loop {
@@ -49,14 +75,24 @@ fn main() -> Result<(), Box<std::error::Error>> {
         };
 
         stream
-            .write_all(format!("dec|{}|{}|{}", ciphertext, one_time_pad, response_port).as_bytes())?;
+            .write_all(format!("dec|{}|{}|{}", plaintext, key, response_port).as_bytes())
+            .unwrap_or_else(|_| {
+                eprintln!("Couldn't send data to the daemon. Is it blocked?");
+                exit(8);
+            });
+
         drop(stream);
-        response_stream = response_listener.accept()?.0;
+        response_stream = response_listener
+            .accept()
+            .unwrap_or_else(|_| {
+                eprintln!("Response stream failed to connect.");
+                exit(9);
+            })
+            .0;
         break;
     }
 
     let mut response = vec![];
     let _ = response_stream.read_to_end(&mut response);
     println!("{}", String::from_utf8(response).unwrap());
-    Ok(())
 }

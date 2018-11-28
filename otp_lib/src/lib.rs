@@ -2,11 +2,19 @@ pub fn encode(plaintext: &str, key: &str) -> Result<String, String> {
     if plaintext.len() > key.len() {
         return Err("The key must be equal or longer than the plaintext.".into());
     }
+
     if !key
         .chars()
-        .all(|chr| chr.is_alphabetic() || chr.is_whitespace())
+        .all(|chr| (chr.is_alphabetic() && chr.is_uppercase()) || chr == ' ')
     {
         return Err("The key source was malformed.".into());
+    }
+
+    if !plaintext
+        .chars()
+        .all(|chr| (chr.is_alphabetic() && chr.is_uppercase()) || chr == ' ')
+    {
+        return Err("The plaintext was malformed.".into());
     }
 
     Ok(plaintext
@@ -37,9 +45,16 @@ pub fn decode(ciphertext: &str, key: &str) -> Result<String, String> {
     }
     if !key
         .chars()
-        .all(|chr| chr.is_alphabetic() || chr.is_whitespace())
+        .all(|chr| (chr.is_alphabetic() && chr.is_uppercase()) || chr == ' ')
     {
         return Err("The key source was malformed.".into());
+    }
+
+    if !ciphertext
+        .chars()
+        .all(|chr| (chr.is_alphabetic() && chr.is_uppercase()) || chr == ' ')
+    {
+        return Err("The ciphertext was malformed.".into());
     }
 
     Ok(ciphertext
@@ -122,6 +137,24 @@ mod test {
         assert!(encoded.unwrap() == "FTAFELFAPNAHKEFNLHGITRCUHPUGGGMLTTFI");
     }
 
+    #[test]
+    fn encode_lowercase() {
+        let encoded = encode(
+            "awdawdawdawdaqwdawdawdawdawdawdawdaawda",
+            "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        );
+        assert!(encoded.is_err());
+    }
+
+    #[test]
+    fn encode_multiple_bad() {
+        let encoded = encode(
+            "dawdojid901jdoiasd=-12dasd-2d1-=d12=-as",
+            "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        );
+        assert!(encoded.is_err());
+    }
+
     // DECODE
 
     #[test]
@@ -167,6 +200,24 @@ mod test {
             "FUKBEAGXTNPT AGSDP JBDRQIPSONGBMAPJQDCNQBBDXQYQSAMOTAKZQCROOSGCIPIFWUNNXGXCAYSRK",
         );
         assert!(decoded.unwrap() == "A REAL EXAMPLE WITH SOME ACTUAL TEXT");
+    }
+
+    #[test]
+    fn decode_lowercase() {
+        let decoded = decode(
+            "awdawdawdawdaqwdawdawdawdawdawdawdaawda",
+            "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        );
+        assert!(decoded.is_err());
+    }
+
+    #[test]
+    fn decode_multiple_bad() {
+        let decoded = decode(
+            "dawdojid901jdoiasd=-12dasd-2d1-=d12=-as",
+            "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        );
+        assert!(decoded.is_err());
     }
 
 }
