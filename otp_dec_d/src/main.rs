@@ -17,7 +17,7 @@ fn handle_stream(mut stream: TcpStream) {
         Ok(buff) => {
             let parts: Vec<&str> = buff.split('|').collect();
             if parts.len() != 4 {
-                let _ = stream.write_all("Incorrectly formatted string.".as_bytes());
+                let _ = stream.write_all("|Incorrectly formatted string.".as_bytes());
                 return;
             }
             let cipher = decode(parts[1], parts[2]);
@@ -29,14 +29,17 @@ fn handle_stream(mut stream: TcpStream) {
                 }
             };
             if parts[0] == "enc" {
-                let _ = stream.write_all("Cannot encode with otp_dec_d.".as_bytes());
+                let _ = stream.write_all("|Cannot encode with otp_dec_d.".as_bytes());
                 return;
             }
-            let _ = stream.write_all(cipher.unwrap_or_else(|e| e).as_bytes());
+            let _ = stream.write_all(match cipher {
+                Ok(cipher) => format!("{}|", cipher),
+                Err(e) => format!("|{}", e),
+            }.as_bytes());
         },
         Err(e) => {
             eprintln!("Couldn't parse buffer as string: {}", e);
-            let _ = stream.write_all("Couldn't parse buffer as string.".as_bytes());
+            let _ = stream.write_all("|Couldn't parse buffer as string.".as_bytes());
         }
     }
 }

@@ -35,7 +35,7 @@ fn main() {
     });
     File::open(filename)
         .unwrap_or_else(|_| {
-            eprintln!("Couldn't read plaintext file.");
+            eprintln!("Couldn't read key file.");
             exit(5);
         })
         .read_to_string(&mut one_time_pad)
@@ -92,7 +92,17 @@ fn main() {
         break;
     }
 
-    let mut response = vec![];
-    let _ = response_stream.read_to_end(&mut response);
-    println!("{}", String::from_utf8(response).unwrap());
+    let mut response = String::new();
+    let _ = response_stream.read_to_string(&mut response);
+    let parts: Vec<&str> = response.split('|').collect();
+
+    match parts.as_slice() {
+        [response, ""] => {
+            println!("{}", response);
+        },
+        ["", error] => {
+            eprintln!("{}", error);
+        },
+        _ => eprintln!("Unexpected result from daemon.")
+    }
 }
