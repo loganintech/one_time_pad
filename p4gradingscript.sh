@@ -119,11 +119,6 @@ otp_enc plaintext5 key70000 $encport > ciphertext5 &
 ${echo} 'Ten second sleep, your program must complete in this time'
 sleep 10
 ls -pla
-
-# Print contents of the `5` files. ciphertext 5 should be empty
-cat plaintext5
-cat ciphertext5
-
 ${echo}
 ${echo} '#-----------------------------------------'
 ${echo} '#15 POINTS: concurrent test of decryption - look for 4 plaintext#_a files that match the plaintext# files'
